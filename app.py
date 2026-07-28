@@ -3,18 +3,27 @@ from flask import Flask, redirect, url_for
 
 from config import initialize_database
 from routes.auth import auth_bp
+from routes.members import members_bp
 
 
 def create_app():
     app = Flask(__name__)
-    app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key")
+
+    app.secret_key = os.getenv(
+        "SECRET_KEY",
+        "dev-secret-key"
+    )
+
+    # Register blueprints
     app.register_blueprint(auth_bp)
+    app.register_blueprint(members_bp)
 
     @app.route("/")
     def index():
         return redirect(url_for("auth.login"))
 
     initialize_database()
+
     return app
 
 

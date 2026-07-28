@@ -3,20 +3,22 @@ import sqlite3
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
+
 DB_TYPE = os.getenv("DB_TYPE", "mysql").lower()
 DB_FILE = os.getenv("DB_FILE", str(BASE_DIR / "library.db"))
 
 
 def get_db_connection():
+
     if DB_TYPE == "mysql":
         import mysql.connector
 
         return mysql.connector.connect(
-            host=os.getenv("MYSQL_HOST", "localhost"),
-            port=int(os.getenv("MYSQL_PORT", "3306")),
-            user=os.getenv("MYSQL_USER", "root"),
-            password=os.getenv("MYSQL_PASSWORD", "root"),
-            database=os.getenv("MYSQL_DATABASE", "library_ms"),
+            host="127.0.0.1",
+            port=3306,
+            user="root",
+            password="Srisudhan@1223",
+            database="library_ms",
             autocommit=True,
         )
 
@@ -27,6 +29,7 @@ def get_db_connection():
 
 
 def initialize_database():
+
     sqlite_schema = """
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,7 +92,7 @@ def initialize_database():
         username VARCHAR(50) NOT NULL UNIQUE,
         email VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
-        role ENUM('admin','librarian','member') NOT NULL DEFAULT 'member',
+        role ENUM('admin','librarian','member') DEFAULT 'member',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB;
 
@@ -122,7 +125,7 @@ def initialize_database():
         borrow_date DATE NOT NULL,
         due_date DATE NOT NULL,
         return_date DATE,
-        status VARCHAR(20) DEFAULT 'active',
+        status ENUM('active','returned') DEFAULT 'active',
         FOREIGN KEY (member_id) REFERENCES members(id),
         FOREIGN KEY (book_id) REFERENCES books(id)
     ) ENGINE=InnoDB;
@@ -140,11 +143,17 @@ def initialize_database():
     """
 
     connection = get_db_connection()
+
     if DB_TYPE == "mysql":
         cursor = connection.cursor()
+
         for statement in [s.strip() for s in mysql_schema.split(";") if s.strip()]:
             cursor.execute(statement)
+
+        cursor.close()
+
     else:
         connection.executescript(sqlite_schema)
+
     connection.commit()
     connection.close()
