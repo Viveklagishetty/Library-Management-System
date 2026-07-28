@@ -13,12 +13,12 @@ def get_db_connection():
     if DB_TYPE == "mysql":
         import mysql.connector
 
-        return mysql.connector.connect(
-            host="127.0.0.1",
-            port=3306,
-            user="root",
-            password="Srisudhan@1223",
-            database="library_ms",
+       return mysql.connector.connect(
+            host=os.getenv("MYSQL_HOST", "localhost"),
+            port=int(os.getenv("MYSQL_PORT", "3306")),
+            user=os.getenv("MYSQL_USER", "root"),
+            password=os.getenv("MYSQL_PASSWORD", "root"),
+            database=os.getenv("MYSQL_DATABASE", "library_ms"),
             autocommit=True,
         )
 
