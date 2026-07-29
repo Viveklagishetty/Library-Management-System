@@ -1,17 +1,14 @@
 from flask import Blueprint, request, jsonify
 from mysql.connector import Error
-from config import get_db
+from config import get_db_connection
 
 books_bp = Blueprint("books", __name__)
-
-
 def success_response(message, data=None, status=200):
     return jsonify({
         "success": True,
         "message": message,
         "data": data
     }), status
-
 
 def error_response(message, status=400, errors=None):
     response = {
@@ -24,11 +21,11 @@ def error_response(message, status=400, errors=None):
     return jsonify(response), status
 
 
-@books_bp.route("", methods=["GET"])
+@books_bp.route("/books", methods=["GET"])
 def get_books():
     db = cursor = None
     try:
-        db = get_db()
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
             SELECT id, title, author, genre, isbn,
@@ -41,7 +38,7 @@ def get_books():
             cursor.fetchall()
         )
     except Error as exc:
-        return error_response(f"Unable to fetch books: {exc}", 500)
+        return error_response(f"Unable to fetch books: {exc}", 400)
     finally:
         if cursor:
             cursor.close()
@@ -53,7 +50,7 @@ def get_books():
 def get_book(book_id):
     db = cursor = None
     try:
-        db = get_db()
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute("SELECT * FROM books WHERE id = %s", (book_id,))
         book = cursor.fetchone()
@@ -63,7 +60,7 @@ def get_book(book_id):
 
         return success_response("Book fetched successfully", book)
     except Error as exc:
-        return error_response(f"Unable to fetch book: {exc}", 500)
+        return error_response(f"Unable to fetch book: {exc}", 400)
     finally:
         if cursor:
             cursor.close()
@@ -71,7 +68,7 @@ def get_book(book_id):
             db.close()
 
 
-@books_bp.route("", methods=["POST"])
+@books_bp.route("/book", methods=["POST"])
 def add_book():
     data = request.get_json(silent=True) or {}
 
@@ -101,7 +98,7 @@ def add_book():
 
     db = cursor = None
     try:
-        db = get_db()
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
             INSERT INTO books
@@ -136,7 +133,7 @@ def add_book():
             db.rollback()
         if exc.errno == 1062:
             return error_response("ISBN already exists", 409)
-        return error_response(f"Unable to add book: {exc}", 500)
+        return error_response(f"Unable to add book: {exc}", 400)
     finally:
         if cursor:
             cursor.close()
@@ -150,7 +147,7 @@ def update_book(book_id):
     db = cursor = None
 
     try:
-        db = get_db()
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute(
             "SELECT * FROM books WHERE id = %s FOR UPDATE",
@@ -242,7 +239,7 @@ def update_book(book_id):
             db.rollback()
         if exc.errno == 1062:
             return error_response("ISBN already exists", 409)
-        return error_response(f"Unable to update book: {exc}", 500)
+        return error_response(f"Unable to update book: {exc}", 400)
     finally:
         if cursor:
             cursor.close()
@@ -254,7 +251,7 @@ def update_book(book_id):
 def delete_book(book_id):
     db = cursor = None
     try:
-        db = get_db()
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
 
         cursor.execute("SELECT id FROM books WHERE id = %s", (book_id,))
@@ -285,7 +282,7 @@ def delete_book(book_id):
                 "This book has borrowing history and cannot be deleted.",
                 409
             )
-        return error_response(f"Unable to delete book: {exc}", 500)
+        return error_response(f"Unable to delete book: {exc}", 400)
     finally:
         if cursor:
             cursor.close()
@@ -304,7 +301,7 @@ def search_books():
     db = cursor = None
 
     try:
-        db = get_db()
+        db = get_db_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
             SELECT id, title, author, genre, isbn,
@@ -322,7 +319,7 @@ def search_books():
             cursor.fetchall()
         )
     except Error as exc:
-        return error_response(f"Unable to search books: {exc}", 500)
+        return error_response(f"Unable to search books: {exc}", 400)
     finally:
         if cursor:
             cursor.close()

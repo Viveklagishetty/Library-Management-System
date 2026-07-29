@@ -24,7 +24,7 @@ def get_members():
         return jsonify(members), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 400
 
 
 # ---------------- ADD MEMBER ---------------- #
@@ -71,7 +71,7 @@ def add_member():
         return jsonify({"message": "Member added successfully"}), 201
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 400
 
 
 # ---------------- UPDATE MEMBER ---------------- #
@@ -126,7 +126,7 @@ def update_member(id):
         return jsonify({"message": "Member updated successfully"}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 400
 
 
 # ---------------- MEMBER BORROW HISTORY ---------------- #
