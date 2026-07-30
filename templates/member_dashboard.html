@@ -7,57 +7,103 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
+    <header class="navbar">
         <h1>Member Dashboard</h1>
-        <div id="user-info">Welcome, <span id="member-name">Member</span></div>
+        <div id="user-info">
+            Welcome, <span id="member-name">{{ member.name if member else 'Member' }}</span>!
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
     </header>
 
     <main class="dashboard-container">
-        <!-- Search Section -->
+        
+        <!-- 1. Book Search & Catalog Section -->
         <section class="card">
             <h2>Book Search & Catalog</h2>
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search by title, author, or ISBN...">
-                <button onclick="searchBooks()">Search</button>
+                <input type="text" id="search-input" placeholder="Search by title, author, or ISBN..." onkeyup="filterBooks()">
             </div>
-            <table id="catalog-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="catalog-list"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="data-table" id="catalog-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if books %}
+                            {% for book in books %}
+                            <tr>
+                                <td>{{ book.title }}</td>
+                                <td>{{ book.author }}</td>
+                                <td>{{ book.category }}</td>
+                                <td>
+                                    <span class="badge {{ 'bg-success' if book.available else 'bg-danger' }}">
+                                        {{ 'Available' if book.available else 'Borrowed' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4" class="text-center">No books available in catalog.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
         </section>
 
-        <!-- Borrowing History -->
+        <!-- 2. Currently Borrowed Books -->
         <section class="card">
             <h2>My Borrowed Books</h2>
-            <table id="loans-table">
-                <thead>
-                    <tr>
-                        <th>Book Title</th>
-                        <th>Issue Date</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="loans-list"></tbody>
-            </table>
-        </section>
-
-        <!-- Fine Tracking -->
-        <section class="card">
-            <h2>Fines & Balance</h2>
-            <div id="fine-summary">
-                <p>Outstanding Fine: <strong id="total-fine">$0.00</strong></p>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Fine (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if borrowed_books %}
+                            {% for item in borrowed_books %}
+                            <tr>
+                                <td>{{ item.title }}</td>
+                                <td>{{ item.issue_date }}</td>
+                                <td>{{ item.due_date }}</td>
+                                <td>₹{{ item.fine }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4" class="text-center">You have no active borrowed books.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
             </div>
         </section>
+
     </main>
 
-    <script src="{{ url_for('static', filename='js/member_dashboard.js') }}"></script>
+    <!-- Client-side Live Search Script -->
+    <script>
+        function filterBooks() {
+            let input = document.getElementById('search-input').value.toLowerCase();
+            let table = document.getElementById('catalog-table');
+            let tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+                let text = tr[i].textContent.toLowerCase();
+                if (text.includes(input)) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 </body>
 </html>
