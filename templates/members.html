@@ -1,0 +1,144 @@
+<section class="mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h4>Members</h4>
+
+            <button class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#memberModal">
+
+                <i class="fa fa-plus"></i>
+                Add Member
+
+            </button>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="membersTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= Member Modal ================= -->
+
+<div class="modal fade" id="memberModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    Member Details
+
+                </h5>
+
+                <button class="btn-close"
+                        data-bs-dismiss="modal">
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="memberId">
+
+                <div class="mb-3">
+
+                    <label>User ID</label>
+
+                    <input type="number"
+                           id="userId"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>Full Name</label>
+
+                    <input type="text"
+                           id="fullName"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>Email</label>
+
+                    <input type="email"
+                           id="email"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>Phone</label>
+
+                    <input type="text"
+                           id="phone"
+                           class="form-control">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    Close
+
+                </button>
+
+                <button class="btn btn-primary"
+                        id="saveMemberBtn">
+
+                    Save Member
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/members.js') }}"></script>

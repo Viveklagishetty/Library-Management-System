@@ -26,6 +26,35 @@ def get_members():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+# ---------------- GET SINGLE MEMBER ---------------- #
+
+@members_bp.route("/members/<int:id>", methods=["GET"])
+def get_member(id):
+    try:
+        conn = get_db_connection()
+
+        if hasattr(conn, "cursor"):  # MySQL
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                "SELECT * FROM members WHERE id=%s",
+                (id,)
+            )
+            member = cursor.fetchone()
+            cursor.close()
+
+        else:  # SQLite
+            cursor = conn.execute(
+                "SELECT * FROM members WHERE id=?",
+                (id,)
+            )
+            member = dict(cursor.fetchone())
+
+        conn.close()
+
+        return jsonify(member), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # ---------------- ADD MEMBER ---------------- #
 
@@ -168,3 +197,44 @@ def member_history(id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+    # ---------------- DELETE MEMBER ---------------- #
+
+@members_bp.route("/members/<int:id>", methods=["DELETE"])
+def delete_member(id):
+    try:
+        conn = get_db_connection()
+
+        if hasattr(conn, "cursor"):  # MySQL
+
+            cursor = conn.cursor()
+
+            cursor.execute(
+                "DELETE FROM members WHERE id=%s",
+                (id,)
+            )
+
+            conn.commit()
+            cursor.close()
+
+        else:  # SQLite
+
+            conn.execute(
+                "DELETE FROM members WHERE id=?",
+                (id,)
+            )
+
+            conn.commit()
+
+        conn.close()
+
+        return jsonify({
+            "message": "Member deleted successfully"
+        }), 200
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 400
