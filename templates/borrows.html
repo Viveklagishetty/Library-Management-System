@@ -1,0 +1,42 @@
+<section class="mt-4">
+  <div class="card shadow">
+    <div class="card-header">
+      <h4>Borrow Management</h4>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-5">
+          <select id="memberSelect" class="form-select"></select>
+        </div>
+
+        <div class="col-md-5">
+          <select id="bookSelect" class="form-select"></select>
+        </div>
+
+        <div class="col-md-2">
+          <button id="issueBookBtn" class="btn btn-success w-100">Issue</button>
+        </div>
+      </div>
+
+      <hr />
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Member</th>
+            <th>Book</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="borrowTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/borrows.js') }}"></script>
