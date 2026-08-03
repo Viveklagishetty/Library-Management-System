@@ -1,0 +1,16 @@
+
+
+**1. Which module did you own?**
+I worked on the **Book Management (`book.py`)** module. I developed the book APIs and tested all endpoints using **Postman**.
+
+**2. What was the hardest integration challenge and how did the team solve it?**
+The biggest challenge was integrating the Book module with the Borrow/Return module. We solved it by following a common database structure, API format, and testing everything together.
+
+**3. What would you build differently if you started again?**
+I would first plan the database and API design before coding. This would make integration easier and reduce future changes.
+
+**4. One thing you learned from a teammate during this project.**
+I learned the importance of teamwork, communication, and following common coding standards so that all modules work together smoothly.
+
+**5. Additional Contribution**
+After completing my module, I also tested the **entire Library Management System**. I verified user login, book management, issuing and returning books, due dates, overdue books, and fine calculation. I tested the APIs using **Postman** and confirmed that the project was working correctly after integration.

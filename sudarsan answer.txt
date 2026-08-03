@@ -1,0 +1,24 @@
+  Library Management System-Module-3(A.Sudharsun)
+
+1. Which module did you own?
+
+I worked on Module 3 – Member Management (Backend). My responsibilities included developing APIs to:
+
+* Register new library members
+* View all members
+* Update member details
+* Retrieve a member's borrow history
+* Connect the module with the shared database and integrate it with the main Flask application
+Handling this module is a sort of Cat on the wall so Handling it with proper knowledge is a hectic task for me. If i made mistake the approach of my teamates would also may gets Difficult so I made a approach in like a way and Build this Module and tested it with Postman
+
+2. What was the hardest integration challenge and how did the team solve it?
+
+The biggest challenge was integrating my module with the team's main application. Initially, I encountered issues with route registration, database configuration, and testing the APIs because multiple modules had to work together. We resolved these issues by discussing the project structure as a team, registering the required Flask blueprints correctly, using the common database schema, and testing the APIs together using Postman before merging the code.
+
+3. What would you build differently if you started again?
+
+If I started again, I would first finalize the project structure, API contracts, and database configuration with the team before writing code. This would reduce integration issues and make the development process smoother. I would also add better validation and error handling from the beginning and ensure that my fellow teammates has any issues in any module and we rectify it toghether without any delay so that submission of the Task can be done without any delay 
+
+4. One thing you learned from a teammate during this project.
+
+I learned how important it is to integrate individual modules using Flask Blueprints and maintain a common project structure. I also learned the importance of using Git branches, Pull Requests, and collaborative testing to avoid conflicts while working in a team.I learned from teamate how to balance the work Like if one of the person works for Minimum efforts due to any other reason the team carried his work in some other part and handled it clearly. Even though we Dont know each of us the coordination among us was so Like Minded

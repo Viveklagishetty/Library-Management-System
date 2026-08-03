@@ -1,0 +1,9 @@
+Which module did you own?
+"I owned Module 1 – Database & Authentication. I was responsible for creating the database schema, implementing user registration and login, session management, and role-based authentication."
+2. What was the hardest integration challenge and how did the team solve it?
+"The hardest challenge was integrating all team modules so they worked with the same database structure and authentication system. We solved it by agreeing on common API routes, keeping the database schema consistent, testing each module together, and fixing integration issues as a team."
+3. What would you build differently if you started again?
+"If I started again, I would define the API endpoints and database design before coding. That would make integration smoother and reduce changes later."
+4. One thing you learned from a teammate during this project.
+"I learned how important Git collaboration is, especially using branches, pull requests, and resolving merge conflicts before merging code into the main branch."
+ 

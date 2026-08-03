@@ -1,0 +1,15 @@
+1. Which module did you own?
+
+I owned Module 6 – Member Portal and Quality Assurance (QA). My responsibilities included developing the member login page and dashboard, implementing the book browsing interface with search functionality, displaying the member's current borrowed books and due dates, and showing fine status and payment history. I also ensured the portal was responsive across different screen sizes. In addition, I performed end-to-end testing from a member's perspective, identified integration issues, documented bugs, and coordinated with the backend and frontend teams to resolve them.
+
+2. What was the hardest integration challenge, and how did the team solve it?
+
+The biggest challenge was integrating the Member Portal with the backend APIs. Initially, some endpoints returned unexpected response formats, and a few APIs were not responding consistently during integration. This caused issues in displaying borrowed books and fine details. We worked together by validating the API contracts, testing endpoints in Postman, reviewing server logs, and updating both the frontend and backend where necessary. After standardizing the API responses and improving error handling, the integration worked smoothly.
+
+3. What would you build differently if you started again?
+
+If I started the project again, I would define the API request and response formats in greater detail before development. I would also create reusable frontend components and implement centralized API service functions to reduce code duplication. Additionally, I would begin integration testing earlier instead of waiting until most modules were completed, which would help identify issues sooner.
+
+4. One thing you learned from a teammate during this project.
+
+One valuable lesson I learned from my teammates was the importance of maintaining a consistent API contract between the frontend and backend. I also learned better debugging techniques using browser developer tools, Postman, and Git for managing feature branches and resolving merge conflicts. This experience improved both my technical skills and my ability to collaborate effectively within a development team.

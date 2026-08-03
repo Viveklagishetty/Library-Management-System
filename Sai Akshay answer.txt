@@ -1,0 +1,17 @@
+1. Which module did you own?
+I worked on Module 4 – Borrow, Return and Fine Management. 
+I implemented the borrowing and return workflow, overdue tracking, fine calculation, fine payment, and validations like book availability and unpaid fines. 
+I also added an Edit Due Date feature to simplify testing from the web interface.
+
+2. What was the hardest integration challenge and how did the team solve it?
+The biggest challenge was getting the complete borrow and fine workflow working correctly. 
+We first resolved Flask and MySQL setup issues, then fixed the logic so overdue books automatically generated fines without creating duplicates. 
+We also updated the frontend to reflect changes without requiring manual refreshes.
+
+3. What would you build differently if you started again?
+I would plan the workflow before coding and keep the fine calculation logic in one place instead of spreading it across multiple parts of the project. 
+I would also set up the development environment earlier to avoid configuration issues.
+
+4. One thing you learned from a teammate during this project?
+I learned the importance of using existing APIs and keeping each module responsible for its own functionality instead of directly modifying another module's data. 
+It made integration much cleaner and easier to maintain.

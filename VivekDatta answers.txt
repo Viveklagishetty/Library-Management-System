@@ -1,0 +1,17 @@
+1. Which module did you own?
+A. I worked on Module 4 – Borrow, Return & Fine System (Backend) along with my teammate Sai Akshay Mangadudla. 
+    We developed the borrow and return APIs, implemented the fine calculation logic, added fine payment functionality, prevented members with unpaid fines from borrowing books, and ensured that books could not be borrowed when no copies were available.
+
+2. What was the hardest integration challenge and how did the team solve it?
+A. The most challenging part was integrating the borrow module with the other backend modules. We faced an issue where the overdue status and fine details were being calculated correctly in the backend after the 14-day borrowing period, but they were not getting reflected in the UI. We also encountered some database connection and integration issues while connecting the borrow module with the books and members modules. 
+    We solved these issues by checking the API responses in Postman, verifying the database records, fixing the route and database connection problems, and coordinating with the frontend team to make sure the UI was consuming the correct API responses.
+
+3. What would you build differently if you started again?
+A. If I started this project again, I would spend more time planning before writing the code. 
+    I would make sure the database design, API endpoints, request and response formats, and folder structure were finalized by the whole team first. This would reduce integration issues later and make the development process much smoother. 
+    I would also test each module with the other modules as soon as it was completed instead of waiting until the final integration.
+
+4. One thing you learned from a teammate during this project.
+A. One thing I learned from my teammates was the importance of keeping the code structure consistent across all modules. 
+    I also gained a better understanding of Git and GitHub, especially working with separate branches, pushing code, resolving integration issues, and merging changes without affecting other team members' work. 
+    This project also helped me understand how important communication is when multiple people are working on the same codebase.

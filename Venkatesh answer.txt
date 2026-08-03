@@ -1,0 +1,31 @@
+ 
+*Which module did you own?
+
+ I have worked on Module-1 which has to create complete database schema for the whole project and 
+ providing routes like registration, login and logout to give authentication for role based access 
+like librarian, member and admin to proceed furthur into the project to see the dashboard of 
+respective persons.
+
+
+• What was the hardest integration challenge and how did the team solve it?
+The hardest challenge is integrating the database with different backend modules 
+like member management,Borrows,returns and fines to handle the proper flow of 
+curd operations of differnt authentication roles like admin,user and member.
+
+By resolving the issues like indentation errors and by testing all the APIs for 
+different modules by using postman and integrating all the modules together properly
+to handle the flow of data through configuring all the members management in this 
+project by discussing with the various modules persons in the team. 
+
+• What would you build differently if you started again?
+I would build proper integration of database with the various backend modules to reduce 
+the issues of handling the integration of various modules which helps us to reduce
+errors during the time of integration.
+
+• One thing you learned from a teammate during this project.
+I have learned the importance of team work from starting to completion of project 
+by proper coordination of all the team members of different modules to design the
+structure of project and sorting out of various modules for different team mates
+and importance of resolving the integration issues by continous testing of all the
+modules together by the team members simultaneously.
+

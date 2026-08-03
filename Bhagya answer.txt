@@ -1,0 +1,26 @@
+1 Which module did you own?
+Module 6 — Member Portal (Frontend) + testing
+
+we built the member dashboard, browse/search interface for books, and the views for active borrows, due dates, and pending fines. Additionally,
+ we took on QA responsibility to test end-to-end flows for all user roles (Admin, Librarian, Member) and catch bugs prior to final integration.
+
+2. What was the hardest integration challenge and how did the team solve it?
+Challenge:
+
+Connecting the member portal frontend with backend APIs while handling dynamic state changes—such as updating available book counts and calculating 
+fines live without full page reloads—presented parameter and format mismatches. Additionally, handling role-based routing checks ensured member data
+ remained isolated and secure.
+
+How We Solved It:
+
+We standardized response payloads and query parameter expectations between frontend fetch() requests and backend routes. 
+We used structured JSON responses, unified placeholder syntax across endpoints, and verified session roles before granting access to member-specific data.
+
+3. What would you build differently if you started again?
+I would establish a strict API specification document (OpenAPI/Postman schema) on Day 1 before writing any frontend or backend code.
+ Having agreed-upon JSON request/response templates upfront would have eliminated minor data format mismatches during the Day 2 integration phase.
+
+4. One thing you learned from a teammate during this project.
+I learned how to effectively use feature branches and Pull Requests in GitHub to collaborate smoothly on a shared codebase. 
+Seeing how my teammate structured branch merges (member-fix into main) helped me understand clean Git workflows and how code 
+reviews prevent breaking changes in a team environment.
