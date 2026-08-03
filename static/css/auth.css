@@ -1,0 +1,174 @@
+/* =========================================================
+   Library Management System - Auth Pages
+   auth.css (login.html / register.html)
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#1f2937,#0d6efd);
+    padding:20px;
+}
+
+/* ---------- Card ---------- */
+
+.auth-card{
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
+    padding:40px 32px;
+}
+
+/* ---------- Brand ---------- */
+
+.auth-brand{
+    text-align:center;
+    margin-bottom:24px;
+}
+
+.auth-brand i{
+    font-size:42px;
+    color:#ffc107;
+}
+
+.auth-brand h1{
+    font-size:22px;
+    font-weight:bold;
+    color:#1f2937;
+    margin-top:8px;
+}
+
+.auth-brand p{
+    font-size:13px;
+    color:#6c757d;
+    margin-top:4px;
+}
+
+/* ---------- Flash messages ---------- */
+
+.messages{
+    margin-bottom:16px;
+}
+
+.message{
+    padding:10px 14px;
+    border-radius:8px;
+    font-size:14px;
+    margin-bottom:8px;
+    background:#fdecea;
+    color:#b02a37;
+    border:1px solid #f5c2c7;
+}
+
+.message.success{
+    background:#e6f6ea;
+    color:#146c2e;
+    border-color:#badbcc;
+}
+
+.message.info{
+    background:#e7f1ff;
+    color:#084298;
+    border-color:#b6d4fe;
+}
+
+.message.warning{
+    background:#fff8e1;
+    color:#7a5c00;
+    border-color:#ffe69c;
+}
+
+/* ---------- Form ---------- */
+
+.auth-form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.form-field{
+    position:relative;
+}
+
+.form-field i{
+    position:absolute;
+    top:50%;
+    left:14px;
+    transform:translateY(-50%);
+    color:#9aa1ac;
+    font-size:14px;
+}
+
+.form-field input,
+.form-field select{
+    width:100%;
+    padding:12px 14px 12px 40px;
+    border:1px solid #dfe3e8;
+    border-radius:8px;
+    font-size:14px;
+    transition:.2s;
+    background:#f9fafb;
+}
+
+.form-field select{
+    padding-left:40px;
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%236c757d' d='M0 0h12L6 8z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+}
+
+.form-field input:focus,
+.form-field select:focus{
+    outline:none;
+    border-color:#0d6efd;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(13,110,253,.15);
+}
+
+.auth-submit{
+    margin-top:4px;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#0d6efd;
+    color:#fff;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.auth-submit:hover{
+    background:#0b5ed7;
+}
+
+/* ---------- Footer link ---------- */
+
+.auth-footer{
+    text-align:center;
+    margin-top:20px;
+    font-size:14px;
+    color:#6c757d;
+}
+
+.auth-footer a{
+    color:#0d6efd;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.auth-footer a:hover{
+    text-decoration:underline;
+}

@@ -17,7 +17,7 @@ def get_db_connection():
             host=os.getenv("MYSQL_HOST", "localhost"),
             port=int(os.getenv("MYSQL_PORT", "3306")),
             user=os.getenv("MYSQL_USER", "root"),
-            password=os.getenv("MYSQL_PASSWORD", "Sathis@2002"),
+            password=os.getenv("MYSQL_PASSWORD", "password"),
             database=os.getenv("MYSQL_DATABASE", "library_ms"),
             autocommit=True,
         )
@@ -84,6 +84,18 @@ def initialize_database():
         FOREIGN KEY (borrow_id) REFERENCES borrows(id),
         FOREIGN KEY (member_id) REFERENCES members(id)
     );
+
+    CREATE TABLE IF NOT EXISTS ebalance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        member_id INTEGER NOT NULL,
+        type VARCHAR(20) NOT NULL,
+        amount DECIMAL(8,2) NOT NULL,
+        reference_type VARCHAR(20),
+        reference_id INTEGER,
+        description VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (member_id) REFERENCES members(id)
+    );
     """
 
     mysql_schema = """
@@ -138,6 +150,18 @@ def initialize_database():
         is_paid TINYINT(1) DEFAULT 0,
         paid_on DATE,
         FOREIGN KEY (borrow_id) REFERENCES borrows(id),
+        FOREIGN KEY (member_id) REFERENCES members(id)
+    ) ENGINE=InnoDB;
+
+    CREATE TABLE IF NOT EXISTS ebalance (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        member_id INT NOT NULL,
+        type VARCHAR(20) NOT NULL,
+        amount DECIMAL(8,2) NOT NULL,
+        reference_type VARCHAR(20),
+        reference_id INT,
+        description VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (member_id) REFERENCES members(id)
     ) ENGINE=InnoDB;
     """

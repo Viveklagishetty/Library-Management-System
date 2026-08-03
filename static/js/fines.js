@@ -7,6 +7,11 @@ const FINE_API = "/fines";
 
 
 let fineTableBody;
+let fineMemberSelect;
+let fineBorrowIdInput;
+let fineAmountInput;
+let fineAmountLoading;
+let addFineBtn;
 
 
 
@@ -20,9 +25,31 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     fineTableBody =
     document.getElementById("fineTableBody");
+    fineMemberSelect = document.getElementById("fineMemberSelect");
+    fineBorrowIdInput = document.getElementById("fineBorrowId");
+    fineAmountInput = document.getElementById("fineAmount");
+    fineAmountLoading = document.getElementById("fineAmountLoading");
+    addFineBtn = document.getElementById("addFineBtn");
 
     if(!fineTableBody){
         return;
+    }
+
+    if (fineMemberSelect) {
+        loadFineMembers();
+    }
+
+    if (addFineBtn) {
+        addFineBtn.addEventListener("click", addFine);
+    }
+
+    if (fineBorrowIdInput) {
+        fineBorrowIdInput.addEventListener("blur", refreshFineAmount);
+        fineBorrowIdInput.addEventListener("input", () => {
+            if (!fineBorrowIdInput.value.trim() && fineAmountInput) {
+                fineAmountInput.value = "";
+            }
+        });
     }
 
     loadFines();
@@ -32,6 +59,70 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 
 
+
+// ======================================
+// Load Members for Fine Form
+// ======================================
+
+async function loadFineMembers() {
+    try {
+        const response = await fetch("/members");
+        const result = await response.json();
+        const members = result.data || result || [];
+
+        if (!fineMemberSelect) return;
+        fineMemberSelect.innerHTML = '<option value="">Select Member</option>';
+
+        members.forEach(member => {
+            const isActive = Number(member.is_active) === 1 || member.is_active === true;
+            if (isActive) {
+                fineMemberSelect.innerHTML += `<option value="${member.id}">${member.full_name || member.name}</option>`;
+            }
+        });
+    } catch (error) {
+        console.log("Load Fine Members Error:", error);
+    }
+}
+
+// ======================================
+// Auto-calculate fine amount from borrow dates
+// ======================================
+
+async function refreshFineAmount() {
+    const borrowId = fineBorrowIdInput ? fineBorrowIdInput.value.trim() : "";
+
+    if (!borrowId || !fineAmountInput) {
+        if (fineAmountInput) fineAmountInput.value = "";
+        return;
+    }
+
+    if (fineAmountLoading) {
+        fineAmountLoading.style.display = "inline";
+    }
+
+    try {
+        const response = await fetch(`/borrow/${borrowId}`);
+        const result = await response.json();
+        const borrow = result.data || null;
+
+        if (!borrow || !borrow.due_date) {
+            fineAmountInput.value = "";
+            return;
+        }
+
+        const dueDate = new Date(borrow.due_date);
+        const returnDate = borrow.return_date ? new Date(borrow.return_date) : new Date();
+        const overdueDays = Math.max(0, Math.floor((returnDate - dueDate) / (1000 * 60 * 60 * 24)));
+        const amount = overdueDays * 5;
+        fineAmountInput.value = amount > 0 ? amount.toFixed(2) : "0.00";
+    } catch (error) {
+        console.log("Refresh Fine Amount Error:", error);
+    } finally {
+        if (fineAmountLoading) {
+            fineAmountLoading.style.display = "none";
+        }
+    }
+}
 
 // ======================================
 // Load Fines
@@ -268,6 +359,47 @@ Pay
 
 
 
+
+// ======================================
+// Add Fine
+// ======================================
+
+async function addFine() {
+    const member_id = fineMemberSelect ? fineMemberSelect.value : "";
+    const borrow_id = fineBorrowIdInput ? fineBorrowIdInput.value.trim() : "";
+    const amount = fineAmountInput ? fineAmountInput.value.trim() : "";
+
+    if (!member_id || !borrow_id || !amount) {
+        alert("Please select a member, enter a borrow ID, and enter an amount.");
+        return;
+    }
+
+    const payload = { member_id, borrow_id };
+    if (amount) {
+        payload.amount = amount;
+    }
+
+    try {
+        const response = await fetch(FINE_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        alert(result.message || result.error || "Fine added successfully");
+
+        if (response.ok) {
+            if (fineBorrowIdInput) fineBorrowIdInput.value = "";
+            if (fineAmountInput) fineAmountInput.value = "";
+            if (fineMemberSelect) fineMemberSelect.value = "";
+            loadFines();
+            if (window.loadDashboard) window.loadDashboard();
+        }
+    } catch (error) {
+        console.log("Add Fine Error:", error);
+    }
+}
 
 // ======================================
 // Pay Fine

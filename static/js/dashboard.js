@@ -69,10 +69,6 @@ console.log(error);
 
 }
 
-
-
-
-
 // Members
 
 async function loadTotalMembers(){

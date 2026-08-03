@@ -47,7 +47,9 @@ result.data || result;
 
 renderMembers(members);
 
-
+if(window.loadBorrowMembers){
+    window.loadBorrowMembers();
+}
 
 }
 

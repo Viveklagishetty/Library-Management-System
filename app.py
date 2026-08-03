@@ -6,7 +6,11 @@ from routes.auth import auth_bp
 from routes.members import members_bp
 from routes.books import books_bp
 from routes.borrows import borrows_bp
+import routes.fines
+print(routes.fines.__file__)
+
 from routes.fines import fines_bp
+from routes.ebalance import ebalance_bp
 
 
 def create_app():
@@ -23,6 +27,7 @@ def create_app():
     app.register_blueprint(books_bp)
     app.register_blueprint(borrows_bp)
     app.register_blueprint(fines_bp)
+    app.register_blueprint(ebalance_bp)
 
 
     @app.route("/")
@@ -34,8 +39,11 @@ def create_app():
     return app
 
 
+
 app = create_app()
 
+
+#print(app.url_map)
 
 if __name__ == "__main__":
     app.run(debug=True)

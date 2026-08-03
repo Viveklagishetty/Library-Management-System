@@ -1,74 +1,66 @@
 <section class="mt-4">
 
-<div class="card shadow">
+    <div class="card shadow">
 
-<div class="card-header">
+        <div class="card-header">
+            <h4>Borrow Management</h4>
+        </div>
 
-<h4>Borrow Management</h4>
+        <div class="card-body">
 
-</div>
+            <div class="row g-2">
 
-<div class="card-body">
+                <div class="col-md-3">
+                    <label>Select Member</label>
+                    <select id="memberSelect" class="form-select"></select>
+                </div>
 
-<div class="row">
+                <div class="col-md-3">
+                    <label>Select Book</label>
+                    <select id="bookSelect" class="form-select"></select>
+                </div>
 
-<div class="col-md-5">
+                <div class="col-md-2">
+                    <label>Borrow Date</label>
+                    <input type="date" class="form-control" id="borrowDate">
+                </div>
 
-<select id="memberSelect" class="form-select">
+                <div class="col-md-2">
+                    <label>Due Date</label>
+                    <input type="date" class="form-control" id="dueDate">
+                </div>
 
-</select>
+                <div class="col-md-2">
+                    <button id="issueBookBtn" class="btn btn-success w-100">
+                        Issue
+                    </button>
+                </div>
 
-</div>
+            </div>
 
-<div class="col-md-5">
+            <hr>
 
-<select id="bookSelect" class="form-select">
+            <table class="table table-bordered">
 
-</select>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Member</th>
+                        <th>Book</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-</div>
+                <tbody id="borrowTableBody"></tbody>
 
-<div class="col-md-2">
+            </table>
 
-<button id="issueBookBtn" class="btn btn-success w-100">
+        </div>
 
-Issue
-
-</button>
-
-</div>
-
-</div>
-
-<hr>
-
-<table class="table table-bordered">
-
-<thead>
-
-<tr>
-
-<th>ID</th>
-<th>Member</th>
-<th>Book</th>
-<th>Borrow Date</th>
-<th>Due Date</th>
-<th>Action</th>
-
-</tr>
-
-</thead>
-
-<tbody id="borrowTableBody">
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
+    </div>
 
 </section>
 
-<script src="{{ url_for('static', filename='js/borrow.js') }}"></script>
+<script src="{{ url_for('static', filename='js/borrows.js') }}"></script>

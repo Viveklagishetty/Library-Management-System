@@ -8,384 +8,264 @@ const BORROW_API = "/borrow";
 const BORROW_ACTIVE_API = "/borrows/active";
 const BORROW_OVERDUE_API = "/borrows/overdue";
 
-
-
 let memberSelect;
 let bookSelect;
 let borrowTableBody;
 let issueBookBtn;
 let overdueTableBody;
+let borrowDateInput;
+let dueDateInput;
 
+function formatDateInputValue(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
 
-document.addEventListener("DOMContentLoaded",()=>{
+function initializeBorrowDateFields() {
+    const today = new Date();
+    const todayStr = formatDateInputValue(today);
 
+    if (borrowDateInput && !borrowDateInput.value) {
+        borrowDateInput.value = todayStr;
+    }
 
+    if (dueDateInput && !dueDateInput.value) {
+        const dueDate = new Date(today);
+        dueDate.setDate(dueDate.getDate() + 14);
+        dueDateInput.value = formatDateInputValue(dueDate);
+    }
+
+    if (borrowDateInput && dueDateInput) {
+        borrowDateInput.addEventListener("change", () => {
+            const borrowDate = new Date(borrowDateInput.value);
+            if (Number.isNaN(borrowDate.getTime())) return;
+
+            const dueDate = new Date(borrowDate);
+            dueDate.setDate(dueDate.getDate() + 14);
+            dueDateInput.value = formatDateInputValue(dueDate);
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
     memberSelect = document.getElementById("memberSelect");
     bookSelect = document.getElementById("bookSelect");
     borrowTableBody = document.getElementById("borrowTableBody");
     issueBookBtn = document.getElementById("issueBookBtn");
     overdueTableBody = document.getElementById("overdueTableBody");
+    borrowDateInput = document.getElementById("borrowDate");
+    dueDateInput = document.getElementById("dueDate");
 
-    if(!memberSelect || !bookSelect || !borrowTableBody || !issueBookBtn){
+    if (!memberSelect || !bookSelect || !borrowTableBody || !issueBookBtn) {
         return;
     }
 
-    loadMembers();
-    loadBooks();
+    initializeBorrowDateFields();
+    loadBorrowMembers();
+    loadBorrowBooks();
     loadBorrows();
     loadOverdues();
 
-
-    issueBookBtn.addEventListener("click",issueBook);
-
-
+    issueBookBtn.addEventListener("click", issueBook);
 });
-
 
 // ======================================
 // Load Members Dropdown
 // ======================================
-
-async function loadMembers(){
-
-    try{
-
-        const response =
-        await fetch(BORROW_MEMBER_API);
-
+async function loadBorrowMembers() {
+    try {
+        const response = await fetch(BORROW_MEMBER_API);
         const result = await response.json();
-
-
-        console.log("Members API:", result);
-
-
         const members = result.data || result;
 
+        if (!memberSelect) return;
+        memberSelect.innerHTML = `<option value="">Select Member</option>`;
 
-        memberSelect.innerHTML =
-        `<option value="">Select Member</option>`;
-
-
-        members.forEach(member=>{
-
-            const isActive =
-            Number(member.is_active) === 1 || member.is_active === true;
-
-            if(isActive){
-
-
+        members.forEach(member => {
+            const isActive = Number(member.is_active) === 1 || member.is_active === true;
+            if (isActive) {
                 memberSelect.innerHTML += `
-
-                <option value="${member.id}">
-                    ${member.full_name || member.name}
-                </option>
-
+                    <option value="${member.id}">
+                        ${member.full_name || member.name}
+                    </option>
                 `;
-
             }
-
-
         });
-
-
+    } catch (error) {
+        console.log("Member Error:", error);
     }
-    catch(error){
-
-        console.log("Member Error:",error);
-
-    }
-
-}
-
-async function issueBook(){
-
-    const member_id = memberSelect.value;
-    const book_id = bookSelect.value;
-
-
-    if(!member_id || !book_id){
-
-        alert("Please select member and book");
-        return;
-
-    }
-
-
-    try{
-
-        const response = await fetch(BORROW_API,{
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-                member_id,
-                book_id
-            })
-
-        });
-
-
-        const result = await response.json();
-
-
-        console.log("Issue Response:",result);
-
-
-        if(response.ok){
-
-            alert(result.message || "Book issued successfully");
-
-            loadBorrows();
-            loadBooks();
-            loadOverdues();
-
-            if(window.loadDashboard){
-                window.loadDashboard();
-            }
-
-            memberSelect.value="";
-            bookSelect.value="";
-
-        }
-        else{
-
-            alert(result.message || result.error || "Failed to issue book");
-
-        }
-
-
-    }
-    catch(error){
-
-        console.log("Issue Error:",error);
-
-    }
-
 }
 
 // ======================================
 // Load Books Dropdown
 // ======================================
+async function loadBorrowBooks() {
+    try {
+        const response = await fetch(BORROW_BOOK_API);
+        const result = await response.json();
+        const books = result.data || result || [];
 
-async function loadBooks(){
+        if (!bookSelect) return;
+        bookSelect.innerHTML = `<option value="">Select Book</option>`;
 
+        books.forEach(book => {
+            if (book.available_copies > 0) {
+                bookSelect.innerHTML += `
+                    <option value="${book.id}">
+                        ${book.title}
+                    </option>
+                `;
+            }
+        });
+    } catch (error) {
+        console.log("Book Error:", error);
+    }
+}
 
-    try{
+// ======================================
+// Issue Book
+// ======================================
+async function issueBook() {
+    const member_id = memberSelect ? memberSelect.value : null;
+    const book_id = bookSelect ? bookSelect.value : null;
+    const borrow_date = borrowDateInput ? borrowDateInput.value : null;
+    const due_date = dueDateInput ? dueDateInput.value : null;
 
+    if (!member_id || !book_id) {
+        alert("Please select member and book");
+        return;
+    }
 
-        const response =
-        await fetch(BORROW_BOOK_API);
+    if (borrow_date && due_date && due_date < borrow_date) {
+        alert("Due date cannot be earlier than borrow date");
+        return;
+    }
+
+    try {
+        const response = await fetch(BORROW_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ member_id, book_id, borrow_date, due_date })
+        });
 
         const result = await response.json();
 
+        if (response.ok) {
+            alert(result.message || "Book issued successfully");
+            loadBorrows();
+            loadBorrowBooks();
+            loadOverdues();
+            if (window.loadBooks) window.loadBooks();
+            if (window.loadDashboard) window.loadDashboard();
 
-        console.log("Books API:",result);
-
-
-
-        const books = result.data || result || [];
-
-
-
-        bookSelect.innerHTML =
-        `<option value="">Select Book</option>`;
-
-
-
-        books.forEach(book=>{
-
-
-            if(book.available_copies > 0){
-
-
-                bookSelect.innerHTML += `
-
-                <option value="${book.id}">
-                    ${book.title}
-                </option>
-
-                `;
-
-
-            }
-
-
-        });
-
-
-
+            if (memberSelect) memberSelect.value = "";
+            if (bookSelect) bookSelect.value = "";
+            initializeBorrowDateFields();
+        } else {
+            alert(result.message || result.error || "Failed to issue book");
+        }
+    } catch (error) {
+        console.log("Issue Error:", error);
     }
-
-    catch(error){
-
-        console.log("Book Error:",error);
-
-    }
-
-
 }
-
-
 
 // ======================================
 // Load Borrow List
 // ======================================
-
-async function loadBorrows(){
-
-
-    try{
-
-
+async function loadBorrows() {
+    try {
         const response = await fetch(BORROW_ACTIVE_API);
-
-
         const result = await response.json();
+        const borrows = result.data || result || [];
 
+        if (!borrowTableBody) return;
+        borrowTableBody.innerHTML = "";
 
-        const borrows = result.data || result;
-
-
-
-        borrowTableBody.innerHTML="";
-
-
-
-        borrows.forEach(item=>{
-
-
-            borrowTableBody.innerHTML += `
-
-
-            <tr>
-
-            <td>${item.borrow_id}</td>
-
-            <td>${item.member_name}</td>
-
-            <td>${item.book_title}</td>
-
-            <td>${item.borrow_date}</td>
-
-            <td>${item.due_date}</td>
-
-
-            <td>
-
-            <button 
-            class="btn btn-success btn-sm"
-            onclick="returnBook(${item.borrow_id})">
-
-            Return
-
-            </button>
-
-
-            </td>
-
-
-            </tr>
-
-
-            `;
-
-
-        });
-
-        if(window.loadDashboard){
-            window.loadDashboard();
+        if (borrows.length === 0) {
+            borrowTableBody.innerHTML = `<tr><td colspan="6" class="text-center">No active borrows</td></tr>`;
+            return;
         }
 
+        borrows.forEach(item => {
+            borrowTableBody.innerHTML += `
+                <tr>
+                    <td>${item.borrow_id}</td>
+                    <td>${item.member_name}</td>
+                    <td>${item.book_title}</td>
+                    <td>${item.borrow_date}</td>
+                    <td>${item.due_date}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="returnBook(${item.borrow_id})">
+                            Return
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
 
-    }
-    catch(error){
-        console.log("Borrow Load Error:",error);
+        if (window.loadDashboard) window.loadDashboard();
+    } catch (error) {
+        console.log("Borrow Load Error:", error);
     }
 }
 
 // ======================================
 // Return Book
+// ======================================
+async function returnBook(id) {
+    if (!confirm("Return this book?")) return;
 
+    try {
+        const response = await fetch(`/return/${id}`, { method: "POST" });
+        const result = await response.json();
 
-async function returnBook(id){
-
-
-    if(!confirm("Return this book?")){
-
-        return;
-
-    }
-
-
-
-    const response = await fetch(`/return/${id}`,{
-
-        method:"POST"
-
-    });
-
-
-
-    const result = await response.json();
-
-
-
-    if(response.ok){
-        alert(result.message || "Book returned successfully");
-        loadBorrows();
-        loadBooks();
-        loadOverdues();
-        if(window.loadDashboard){
-            window.loadDashboard();
-        }
-        return;
-    }
-
-    alert(result.error || result.message || "Failed to return book");
-}
-
-async function loadOverdues(){
-    if(!overdueTableBody){
-        return;
-    }
-
-    try{
-        const response =
-        await fetch(BORROW_OVERDUE_API);
-
-        const result =
-        await response.json();
-
-        const rows =
-        result.data || result || [];
-
-        overdueTableBody.innerHTML = "";
-
-        if(rows.length === 0){
-            overdueTableBody.innerHTML = `
-            <tr>
-            <td colspan="4" class="text-center">No overdue books</td>
-            </tr>
-            `;
+        if (response.ok) {
+            alert(result.message || "Book returned successfully");
+            loadBorrows();
+            loadBorrowBooks();
+            loadOverdues();
+            if (window.loadBooks) window.loadBooks();
+            if (window.loadDashboard) window.loadDashboard();
             return;
         }
 
-        rows.forEach(row=>{
+        alert(result.error || result.message || "Failed to return book");
+    } catch (error) {
+        console.log("Return Error:", error);
+    }
+}
+
+// ======================================
+// Load Overdue Books
+// ======================================
+async function loadOverdues() {
+    if (!overdueTableBody) return;
+
+    try {
+        const response = await fetch(BORROW_OVERDUE_API);
+        const result = await response.json();
+        const rows = result.data || result || [];
+
+        overdueTableBody.innerHTML = "";
+
+        if (rows.length === 0) {
+            overdueTableBody.innerHTML = `<tr><td colspan="4" class="text-center">No overdue books</td></tr>`;
+            return;
+        }
+
+        rows.forEach(row => {
             overdueTableBody.innerHTML += `
-            <tr>
-            <td>${row.member_name || ""}</td>
-            <td>${row.book_title || ""}</td>
-            <td>${row.due_date || ""}</td>
-            <td>${row.overdue_days ?? ""}</td>
-            </tr>
+                <tr>
+                    <td>${row.member_name || ""}</td>
+                    <td>${row.book_title || ""}</td>
+                    <td>${row.due_date || ""}</td>
+                    <td>${row.overdue_days ?? ""}</td>
+                </tr>
             `;
         });
-    }
-    catch(error){
-        console.log("Overdue Load Error:",error);
+    } catch (error) {
+        console.log("Overdue Load Error:", error);
     }
 }

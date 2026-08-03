@@ -1,7 +1,11 @@
 from flask import Blueprint, request, jsonify
-from config import get_db_connection
+from config import DB_TYPE, get_db_connection
 
 members_bp = Blueprint("members", __name__)
+
+
+def is_mysql():
+    return DB_TYPE == "mysql"
 
 # ---------------- GET ALL MEMBERS ---------------- #
 
@@ -10,13 +14,25 @@ def get_members():
     try:
         conn = get_db_connection()
 
-        if hasattr(conn, "cursor"):  # MySQL
+        sync_sql = """
+            INSERT INTO members (user_id, full_name, email, is_active)
+            SELECT u.id, u.username, u.email, 1
+            FROM users u
+            WHERE u.role = 'member'
+              AND u.id NOT IN (SELECT m.user_id FROM members m WHERE m.user_id IS NOT NULL)
+        """
+
+        if is_mysql():  # MySQL
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM members")
+            cursor.execute(sync_sql)
+            conn.commit()
+            cursor.execute("SELECT * FROM members ORDER BY id DESC")
             members = cursor.fetchall()
             cursor.close()
         else:  # SQLite
-            cursor = conn.execute("SELECT * FROM members")
+            conn.execute(sync_sql)
+            conn.commit()
+            cursor = conn.execute("SELECT * FROM members ORDER BY id DESC")
             members = [dict(row) for row in cursor.fetchall()]
 
         conn.close()
@@ -25,7 +41,6 @@ def get_members():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
 # ---------------- GET SINGLE MEMBER ---------------- #
 
 @members_bp.route("/members/<int:id>", methods=["GET"])
@@ -33,7 +48,7 @@ def get_member(id):
     try:
         conn = get_db_connection()
 
-        if hasattr(conn, "cursor"):  # MySQL
+        if is_mysql():  # MySQL
             cursor = conn.cursor(dictionary=True)
             cursor.execute(
                 "SELECT * FROM members WHERE id=%s",
@@ -70,7 +85,7 @@ def add_member():
 
         conn = get_db_connection()
 
-        if hasattr(conn, "cursor"):  # MySQL
+        if is_mysql():  # MySQL
             cursor = conn.cursor()
 
             cursor.execute(
@@ -117,7 +132,7 @@ def update_member(id):
 
         conn = get_db_connection()
 
-        if hasattr(conn, "cursor"):  # MySQL
+        if is_mysql():  # MySQL
             cursor = conn.cursor()
 
             cursor.execute(
@@ -180,7 +195,7 @@ def member_history(id):
         ORDER BY br.borrow_date DESC
         """
 
-        if hasattr(conn, "cursor"):  # MySQL
+        if is_mysql():  # MySQL
             cursor = conn.cursor(dictionary=True)
             cursor.execute(query, (id,))
             history = cursor.fetchall()
@@ -190,6 +205,18 @@ def member_history(id):
             query = query.replace("%s", "?")
             cursor = conn.execute(query, (id,))
             history = [dict(row) for row in cursor.fetchall()]
+
+        # Convert datetime to date only
+        for item in history:
+
+            if item.get("borrow_date"):
+                item["borrow_date"] = str(item["borrow_date"]).split(" ")[0]
+
+            if item.get("due_date"):
+                item["due_date"] = str(item["due_date"]).split(" ")[0]
+
+            if item.get("return_date"):
+                item["return_date"] = str(item["return_date"]).split(" ")[0]
 
         conn.close()
 
@@ -206,7 +233,7 @@ def delete_member(id):
     try:
         conn = get_db_connection()
 
-        if hasattr(conn, "cursor"):  # MySQL
+        if is_mysql():  # MySQL
 
             cursor = conn.cursor()
 

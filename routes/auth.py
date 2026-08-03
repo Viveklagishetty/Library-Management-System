@@ -105,6 +105,14 @@ def register():
             (username, email, hashed_password, role),
         )
         connection.commit()
+        if role == "member":
+            new_user_id = cursor.lastrowid
+            execute_query(
+                connection,
+                "INSERT INTO members (user_id, full_name, email) VALUES (%s, %s, %s)",
+                (new_user_id, username, email),
+            )
+            connection.commit()
         connection.close()
         flash("Registration successful. Please log in.", "success")
         return redirect(url_for("auth.login"))
@@ -149,6 +157,24 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("auth.login"))
 
+def get_member_for_user(user_id, username=None, email=None):
+    connection = get_db_connection()
+    cursor = execute_query(connection, "SELECT * FROM members WHERE user_id = %s LIMIT 1", (user_id,))
+    member = fetch_one(cursor)
+
+    if not member and username and email:
+        execute_query(
+            connection,
+            "INSERT INTO members (user_id, full_name, email) VALUES (%s, %s, %s)",
+            (user_id, username, email),
+        )
+        connection.commit()
+        cursor = execute_query(connection, "SELECT * FROM members WHERE user_id = %s LIMIT 1", (user_id,))
+        member = fetch_one(cursor)
+
+    connection.close()
+    return member
+
 
 @auth_bp.route("/dashboard")
 @login_required
@@ -158,7 +184,8 @@ def dashboard():
         return render_template("admin_dashboard.html", user=user)
     if user["role"] == "librarian":
         return render_template("librarian_dashboard.html", user=user)
-    return render_template("member_dashboard.html", user=user)
+    member = get_member_for_user(user["id"], user.get("username"), user.get("email"))
+    return render_template("member_dashboard.html", user=user, member=member)
 
 
 @auth_bp.route("/admin-dashboard")
@@ -179,4 +206,6 @@ def librarian_dashboard():
 @login_required
 @role_required("member")
 def member_dashboard():
-    return render_template("member_dashboard.html", user=session["user"])
+    user = session["user"]
+    member = get_member_for_user(user["id"], user.get("username"), user.get("email"))
+    return render_template("member_dashboard.html", user=user, member=member)
