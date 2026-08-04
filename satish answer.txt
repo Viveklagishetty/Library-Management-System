@@ -1,0 +1,11 @@
+1. Which module did you own?
+I was responsible for Module 5 – Admin & Librarian Dashboard. My work included developing the dashboard UI, implementing Books Management (Add, Edit, Delete, Search), Members Management, Borrow Management, and displaying dashboard statistics by integrating the frontend with the Flask backend APIs.
+
+2. What was the hardest integration challenge and how did the team solve it?
+The biggest challenge was integrating the frontend with the backend APIs because some endpoints were returning incorrect data or not loading as expected. We worked together by checking API responses, debugging JavaScript and Flask code, fixing endpoint mismatches, and testing each module individually before integrating everything into the dashboard.
+
+3. What would you build differently if you started again?
+If I started again, I would organize the project into smaller, modular components from the beginning and define the API structure before starting the frontend. This would make the code easier to maintain, debug, and extend with new features.
+
+4. One thing you learned from a teammate during this project.
+I learned the importance of team collaboration and code integration. My teammate showed me how regular communication, testing each other's work, and following a consistent project structure help avoid integration issues and make development smoother.
